@@ -1,4 +1,4 @@
-# Fish Traps Remastered forge
+# Fish Traps Remastered Forge
 This mod is Fish Traps Remastered forge version.
 
 - [Original Mod Download](https://www.curseforge.com/minecraft/mc-mods/fish-traps)
@@ -9,12 +9,12 @@ This mod is Fish Traps Remastered forge version.
 ### Description:
 
 Mod originally created by **@kylertlove** .
-mc mod for auto fishing.  Supports both Forge and Fabric.
+mc mod for auto fishing. Supports both Forge and Fabric.
 
 ### Disclaimer:
 
-- I am not the original creator of the mod! I just ported to 1.20.1 and 1.21.1 Fabric (No forge).
-- The idea, resources (textures, logo…) and most of the code was created by **@kylertlove**.
+- I am not the original creator of the mod! I just ported to 1.20.1.
+- Forge does not use the original author's code; it is my refactored version.
 
 ### License:
 
