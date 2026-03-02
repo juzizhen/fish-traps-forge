@@ -93,7 +93,7 @@ public class FishTrapInit {
     public static final RegistryObject<CreativeModeTab> FISH_TRAP_TAB = CREATIVE_MODE_TABS.register("fishtraps_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.fishtraps.fishtraps"))
-                    .icon(() -> new ItemStack(Items.FISHING_ROD))
+                    .icon(() -> new ItemStack(WOODEN_FISH_TRAP_ITEM.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(WOODEN_FISH_TRAP_ITEM.get());
                         output.accept(IRON_FISH_TRAP_ITEM.get());

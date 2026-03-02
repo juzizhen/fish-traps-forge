@@ -18,7 +18,6 @@ public class Fishtraps {
 
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-//        FishTrapsManager.register(modBus);
         MinecraftForge.EVENT_BUS.register(this);
         FishTrapInit.BLOCKS.register(modBus);
         FishTrapInit.ITEMS.register(modBus);
