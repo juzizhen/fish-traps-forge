@@ -54,6 +54,7 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
 
     public WoodenFishTrapTileEntity(BlockPos pos, BlockState state) {
         super(FishTrapInit.WOODEN_FISH_TRAP_ENTITY.get(), pos, state);
+        this.fishTrapItemHandler.setTile(this);
         this.luckOfTheSeaLevel = FishTrapsConfig.woodenTrapLuckLevel.get();
         this.lureLevel = FishTrapsConfig.woodenTrapLureLevel.get();
         this.tickCheck = FishTrapsConfig.woodenTrapBaseTime.get();
@@ -154,6 +155,12 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
         return new WoodenFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get());
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.put("Inventory", fishTrapItemHandler.serializeNBT());
     }
 
     @Override

@@ -54,6 +54,7 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
 
     public IronFishTrapTileEntity(BlockPos pos, BlockState state) {
         super(FishTrapInit.IRON_FISH_TRAP_ENTITY.get(), pos, state);
+        this.fishTrapItemHandler.setTile(this);
         this.luckOfTheSeaLevel = FishTrapsConfig.ironTrapLuckLevel.get();
         this.lureLevel = FishTrapsConfig.ironTrapLureLevel.get();
         this.tickCheck = FishTrapsConfig.ironTrapBaseTime.get();
@@ -155,6 +156,12 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
         return new IronFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get());
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.put("Inventory", fishTrapItemHandler.serializeNBT());
     }
 
     @Override

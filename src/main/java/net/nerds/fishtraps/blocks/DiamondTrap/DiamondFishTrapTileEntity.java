@@ -54,6 +54,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
 
     public DiamondFishTrapTileEntity(BlockPos pos, BlockState state) {
         super(FishTrapInit.DIAMOND_FISH_TRAP_ENTITY.get(), pos, state);
+        this.fishTrapItemHandler.setTile(this);
         this.luckOfTheSeaLevel = FishTrapsConfig.diamondTrapLuckLevel.get();
         this.lureLevel = FishTrapsConfig.diamondTrapLureLevel.get();
         this.tickCheck = FishTrapsConfig.diamondTrapBaseTime.get();
