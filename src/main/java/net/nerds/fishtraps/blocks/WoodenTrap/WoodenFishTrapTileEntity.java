@@ -1,7 +1,11 @@
 package net.nerds.fishtraps.blocks.WoodenTrap;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
@@ -12,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,8 +31,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 import net.nerds.fishtraps.FishTrapInit;
-import net.nerds.fishtraps.Fishtraps;
-import net.nerds.fishtraps.items.FishBait;
 import net.nerds.fishtraps.util.FishTrapItemHandler;
 import net.nerds.fishtraps.util.FishTrapsConfig;
 import org.jetbrains.annotations.NotNull;
@@ -37,28 +40,46 @@ import java.util.List;
 
 public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvider {
 
-    protected FishTrapItemHandler fishTrapItemHandler = new FishTrapItemHandler();
-    protected RangedWrapper itemHandlerBait = new RangedWrapper(fishTrapItemHandler, 0, 1);
-    protected LazyOptional<IItemHandler> capBait = LazyOptional.of(() -> itemHandlerBait);
-    protected RangedWrapper itemHandlerOutput = new RangedWrapper(fishTrapItemHandler, 1, 46);
-    protected LazyOptional<IItemHandler> capOutput = LazyOptional.of(() -> itemHandlerOutput);
-
-    private long tickCounter = 0;
     private final long tickCheck;
     private final int luckOfTheSeaLevel;
     private final int lureLevel;
-    private final int fishBaitDurability;
     private final boolean shouldTrapHavePenalty;
     private final boolean useDefaultFishingLoottable;
+    protected FishTrapItemHandler fishTrapItemHandler = new FishTrapItemHandler(this) {
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            if (slot == 0) {
+                if (!getStackInSlot(0).isEmpty()) return stack;
+
+                ItemStack toInsert = stack.copy();
+                toInsert.setCount(1);
+
+                ItemStack remainder = stack.copy();
+                remainder.shrink(1);
+
+                return super.insertItem(slot, toInsert, simulate).isEmpty() ? remainder : stack;
+            }
+            return super.insertItem(slot, stack, simulate);
+        }
+    };
+    protected RangedWrapper itemHandlerBait;
+    protected LazyOptional<IItemHandler> capBait;
+    protected RangedWrapper itemHandlerOutput;
+    protected LazyOptional<IItemHandler> capOutput;
+    private long tickCounter = 0;
 
     public WoodenFishTrapTileEntity(BlockPos pos, BlockState state) {
         super(FishTrapInit.WOODEN_FISH_TRAP_ENTITY.get(), pos, state);
         this.luckOfTheSeaLevel = FishTrapsConfig.woodenTrapLuckLevel.get();
         this.lureLevel = FishTrapsConfig.woodenTrapLureLevel.get();
         this.tickCheck = FishTrapsConfig.woodenTrapBaseTime.get();
-        this.fishBaitDurability = FishTrapsConfig.fishBaitDurability.get();
         this.shouldTrapHavePenalty = FishTrapsConfig.shouldTrapHavePenalty.get();
         this.useDefaultFishingLoottable = FishTrapsConfig.useDefaultFishingLoottable.get();
+
+        this.itemHandlerBait = new RangedWrapper(fishTrapItemHandler, 0, 1);
+        this.capBait = LazyOptional.of(() -> itemHandlerBait);
+        this.itemHandlerOutput = new RangedWrapper(fishTrapItemHandler, 1, 46);
+        this.capOutput = LazyOptional.of(() -> itemHandlerOutput);
     }
 
     public void tick(Level level) {
@@ -66,8 +87,9 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
 
         long effectiveTickCheck = this.tickCheck;
         ItemStack bait = itemHandlerBait.getStackInSlot(0);
+
         if (bait.isEmpty() && shouldTrapHavePenalty) {
-            effectiveTickCheck = effectiveTickCheck * fishBaitDurability;
+            effectiveTickCheck *= Math.max(1, FishTrapsConfig.fishBaitDurability.get());
         }
 
         if (tickCounter >= effectiveTickCheck) {
@@ -80,9 +102,17 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
 
     private void fish() {
         if (level == null || !(level instanceof ServerLevel serverLevel)) return;
+
         ItemStack fishingRod = new ItemStack(Items.FISHING_ROD);
-        fishingRod.enchant(Enchantments.FISHING_SPEED, this.lureLevel);
-        fishingRod.enchant(Enchantments.FISHING_LUCK, this.luckOfTheSeaLevel);
+        Holder<net.minecraft.world.item.enchantment.Enchantment> lureHolder = serverLevel.registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LURE);
+        Holder<net.minecraft.world.item.enchantment.Enchantment> luckHolder = serverLevel.registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LUCK_OF_THE_SEA);
+
+        ItemEnchantments.Mutable mutableEnchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        mutableEnchantments.set(lureHolder, this.lureLevel);
+        mutableEnchantments.set(luckHolder, this.luckOfTheSeaLevel);
+        fishingRod.set(net.minecraft.core.component.DataComponents.ENCHANTMENTS, mutableEnchantments.toImmutable());
 
         LootParams params = new LootParams.Builder(serverLevel)
                 .withParameter(LootContextParams.ORIGIN, this.getBlockPos().getCenter())
@@ -92,23 +122,31 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
 
         LootTable lootTable;
         if (useDefaultFishingLoottable) {
-            lootTable = serverLevel.getServer().getLootData().getLootTable(BuiltInLootTables.FISHING);
+            lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
             if (serverLevel.random.nextDouble() < 0.04 + ((double) this.luckOfTheSeaLevel / 100)) {
-                lootTable = serverLevel.getServer().getLootData().getLootTable(BuiltInLootTables.FISHING_TREASURE);
+                lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_TREASURE);
             }
         } else {
-            lootTable = serverLevel.getServer().getLootData().getLootTable(new ResourceLocation(Fishtraps.MODID, "traps/wooden_fish_trap"));
+            ResourceKey<LootTable> customKey = ResourceKey.create(Registries.LOOT_TABLE,
+                    ResourceLocation.fromNamespaceAndPath("fishtraps", "traps/wooden_fish_trap"));
+            lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(customKey);
         }
 
         List<ItemStack> loot = lootTable.getRandomItems(params);
         fishTrapItemHandler.addListToInventory(loot);
 
         ItemStack bait = itemHandlerBait.getStackInSlot(0);
-        if (bait.getItem() instanceof FishBait) {
-            if (bait.hurt(1, serverLevel.getRandom(), null)) {
+        if (!bait.isEmpty()) {
+            int currentDamage = bait.getOrDefault(DataComponents.DAMAGE, 0);
+            int maxDamage = FishTrapsConfig.fishBaitDurability.get();
+
+            if (currentDamage + 1 >= maxDamage) {
                 itemHandlerBait.setStackInSlot(0, ItemStack.EMPTY);
-                setChanged();
+            } else {
+                bait.set(DataComponents.MAX_DAMAGE, maxDamage);
+                bait.set(DataComponents.DAMAGE, currentDamage + 1);
             }
+            setChanged();
         }
     }
 
@@ -123,7 +161,7 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
     }
 
     public FishTrapItemHandler getInventory() {
-        return this.fishTrapItemHandler;
+        return fishTrapItemHandler;
     }
 
     @Override
@@ -152,6 +190,6 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new WoodenFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get());
+        return new WoodenFishTrapContainer(containerId, playerInventory, getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get());
     }
 }

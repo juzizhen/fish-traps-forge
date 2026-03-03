@@ -12,7 +12,7 @@ import net.nerds.fishtraps.Fishtraps;
 @OnlyIn(Dist.CLIENT)
 public class DiamondFishTrapGui extends AbstractContainerScreen<DiamondFishTrapContainer> {
 
-    private static final ResourceLocation TRAP_TEXTURE = new ResourceLocation(Fishtraps.MODID, "textures/gui/fish_trap_gui.png");
+    private static final ResourceLocation TRAP_TEXTURE = ResourceLocation.fromNamespaceAndPath(Fishtraps.MODID, "textures/gui/fish_trap_gui.png");
 
     public DiamondFishTrapGui(DiamondFishTrapContainer container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -35,7 +35,7 @@ public class DiamondFishTrapGui extends AbstractContainerScreen<DiamondFishTrapC
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

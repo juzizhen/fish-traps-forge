@@ -2,36 +2,65 @@ package net.nerds.fishtraps.util;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
-import net.nerds.fishtraps.items.FishBait;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FishTrapItemHandler extends ItemStackHandler {
 
-    public FishTrapItemHandler() {
+    private final net.minecraft.world.level.block.entity.BlockEntity tileEntity;
+
+    public FishTrapItemHandler(net.minecraft.world.level.block.entity.BlockEntity tileEntity) {
         super(46);
+        this.tileEntity = tileEntity;
     }
 
-    public void addListToInventory(List<ItemStack> list) {
-        list.forEach(itemStack -> {
-            for(int i = 1; i <= getSlots() - 1; i++) {
-                if(insertItem(i, itemStack, false) == ItemStack.EMPTY) {
-                    break;
+    @Override
+    protected void onContentsChanged(int slot) {
+        super.onContentsChanged(slot);
+        if (tileEntity != null) {
+            tileEntity.setChanged();
+        }
+    }
+
+    public void addListToInventory(List<ItemStack> loot) {
+        for (ItemStack stackToAdd : loot) {
+            if (stackToAdd.isEmpty()) continue;
+
+            ItemStack remaining = stackToAdd.copy();
+
+            for (int i = 1; i < getSlots(); i++) {
+                ItemStack existing = getStackInSlot(i);
+                if (!existing.isEmpty() &&
+                        ItemStack.isSameItemSameComponents(existing, remaining) &&
+                existing.getCount() < existing.getMaxStackSize()) {
+                    remaining = insertItem(i, remaining, false);
+                    if (remaining.isEmpty()) break;
                 }
             }
-        });
+
+            if (!remaining.isEmpty()) {
+                for (int i = 1; i < getSlots(); i++) {
+                    if (getStackInSlot(i).isEmpty()) {
+                        setStackInSlot(i, remaining);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public int getSlotLimit(int slot) {
-        return getStackInSlot(slot).getMaxStackSize();
+        if (slot == 0) return 64;
+        ItemStack stack = getStackInSlot(slot);
+        return stack.isEmpty() ? 64 : stack.getMaxStackSize();
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        if(slot == 0) {
-            return stack.getItem() instanceof FishBait;
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        if (slot == 0) {
+            return stack.getItem() instanceof net.nerds.fishtraps.items.FishBait;
         }
         return true;
     }

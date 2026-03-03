@@ -1,8 +1,8 @@
 package net.nerds.fishtraps.blocks.IronTrap;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import net.nerds.fishtraps.FishTrapInit;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,9 +26,13 @@ public class IronFishTrap extends BaseEntityBlock implements SimpleWaterloggedBl
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public IronFishTrap() {
-        super(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).noOcclusion());
+    public IronFishTrap(BlockBehaviour.Properties properties) {
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, true));
+    }
+
+    public IronFishTrap() {
+        this(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion());
     }
 
     @Nullable
@@ -46,11 +49,11 @@ public class IronFishTrap extends BaseEntityBlock implements SimpleWaterloggedBl
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof IronFishTrapTileEntity trapEntity) {
-                NetworkHooks.openScreen(serverPlayer, trapEntity, buf -> buf.writeBlockPos(pos));
+                serverPlayer.openMenu(trapEntity, pos);
             }
         }
         return InteractionResult.SUCCESS;
@@ -82,6 +85,11 @@ public class IronFishTrap extends BaseEntityBlock implements SimpleWaterloggedBl
             }
             super.onRemove(state, level, pos, newState, isMoving);
         }
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(net.nerds.fishtraps.blocks.IronTrap.IronFishTrap::new);
     }
 
     @Override

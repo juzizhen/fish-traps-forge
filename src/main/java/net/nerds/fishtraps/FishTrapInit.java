@@ -85,8 +85,9 @@ public class FishTrapInit {
                     }));
 
 
-    public static final RegistryObject<Item> FISH_BAIT =
-            ITEMS.register("fish_trap_bait", FishBait::new);
+    public static final RegistryObject<Item> FISH_BAIT = ITEMS.register("fish_trap_bait",
+            () -> new FishBait(new Item.Properties().stacksTo(64))
+    );
 
     static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Fishtraps.MODID);
 
