@@ -2,8 +2,10 @@ package net.nerds.fishtraps.blocks.IronTrap;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -191,5 +193,19 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
         return new IronFishTrapContainer(containerId, playerInventory, getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get());
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        tag.put("Inventory", fishTrapItemHandler.serializeNBT(provider));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        if (tag.contains("Inventory")) {
+            fishTrapItemHandler.deserializeNBT(provider, tag.getCompound("Inventory"));
+        }
     }
 }
