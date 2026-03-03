@@ -1,6 +1,7 @@
 package net.nerds.fishtraps.blocks.WoodenTrap;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -153,5 +154,13 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
         return new WoodenFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get());
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        if (tag.contains("Inventory")) {
+            fishTrapItemHandler.deserializeNBT(tag.getCompound("Inventory"));
+        }
     }
 }

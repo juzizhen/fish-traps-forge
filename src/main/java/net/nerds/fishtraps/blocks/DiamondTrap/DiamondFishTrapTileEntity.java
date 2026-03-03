@@ -1,6 +1,7 @@
 package net.nerds.fishtraps.blocks.DiamondTrap;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -153,5 +154,19 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
         return new DiamondFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get());
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.put("Inventory", fishTrapItemHandler.serializeNBT());
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        if (tag.contains("Inventory")) {
+            fishTrapItemHandler.deserializeNBT(tag.getCompound("Inventory"));
+        }
     }
 }
