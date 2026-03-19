@@ -20,6 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -96,10 +97,41 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
 
         if (tickCounter >= effectiveTickCheck) {
             tickCounter = 0;
-            fish();
+            if (isSurroundedByLiquid()) {
+                fish();
+            }
         } else {
             tickCounter++;
         }
+    }
+
+    private boolean isValidLiquid(BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        boolean valid = state.is(Blocks.WATER);
+
+        if (FishTrapsConfig.workingInLava.get()) {
+            valid = valid || state.is(Blocks.LAVA);
+        }
+
+        return valid;
+    }
+
+    private boolean isSurroundedByLiquid() {
+        if (level == null) return false;
+
+        BlockPos center = this.getBlockPos();
+        Iterable<BlockPos> checkArea = BlockPos.betweenClosed(
+                center.offset(-1, 0, -1),
+                center.offset(1, 0, 1)
+        );
+
+        for (BlockPos checkPos : checkArea) {
+            BlockState state = level.getBlockState(checkPos);
+            if (!(isValidLiquid(checkPos) || state.getBlock() instanceof IronFishTrap)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void fish() {

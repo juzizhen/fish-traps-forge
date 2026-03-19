@@ -23,6 +23,7 @@ public class FishTrapsConfig {
     public static IntValue fishBaitDurability = null;
     public static BooleanValue shouldTrapHavePenalty = null;
     public static BooleanValue useDefaultFishingLoottable = null;
+    public static BooleanValue workingInLava = null;
 
     static {
         Pair<FishTrapsConfig,ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(FishTrapsConfig::new);
@@ -47,5 +48,6 @@ public class FishTrapsConfig {
         fishBaitDurability = builder.comment("The durability of fish bait").defineInRange("fishBaitDurability", 400, 1, 200000);
         shouldTrapHavePenalty = builder.comment("Should fish traps be penalized if they dont have bait in them").define("shouldTrapHavePenalty", true);
         useDefaultFishingLoottable = builder.comment("Use the vanilla fishing loot table (Other Mods may have altered this). If false - you can add custom datapack loottable in /fishtraps/loot_tables/traps/{material}_fish_trap.json").define("useDefaultFishingLoottable", true);
+        workingInLava =  builder.comment("Allow fish traps to function even in lava.").define("workingInLava", false);
     }
 }
