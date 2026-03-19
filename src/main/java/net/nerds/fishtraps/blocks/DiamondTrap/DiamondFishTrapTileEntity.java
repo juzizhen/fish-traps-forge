@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -38,19 +39,18 @@ import java.util.List;
 
 public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvider {
 
-    protected FishTrapItemHandler fishTrapItemHandler = new FishTrapItemHandler();
-    protected RangedWrapper itemHandlerBait = new RangedWrapper(fishTrapItemHandler, 0, 1);
-    protected LazyOptional<IItemHandler> capBait = LazyOptional.of(() -> itemHandlerBait);
-    protected RangedWrapper itemHandlerOutput = new RangedWrapper(fishTrapItemHandler, 1, 46);
-    protected LazyOptional<IItemHandler> capOutput = LazyOptional.of(() -> itemHandlerOutput);
-
-    private long tickCounter = 0;
     private final long tickCheck;
     private final int luckOfTheSeaLevel;
     private final int lureLevel;
     private final int fishBaitDurability;
     private final boolean shouldTrapHavePenalty;
     private final boolean useDefaultFishingLoottable;
+    protected FishTrapItemHandler fishTrapItemHandler = new FishTrapItemHandler();
+    protected RangedWrapper itemHandlerBait = new RangedWrapper(fishTrapItemHandler, 0, 1);
+    protected LazyOptional<IItemHandler> capBait = LazyOptional.of(() -> itemHandlerBait);
+    protected RangedWrapper itemHandlerOutput = new RangedWrapper(fishTrapItemHandler, 1, 46);
+    protected LazyOptional<IItemHandler> capOutput = LazyOptional.of(() -> itemHandlerOutput);
+    private long tickCounter = 0;
 
     public DiamondFishTrapTileEntity(BlockPos pos, BlockState state) {
         super(FishTrapInit.DIAMOND_FISH_TRAP_ENTITY.get(), pos, state);
@@ -74,10 +74,41 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
 
         if (tickCounter >= effectiveTickCheck) {
             tickCounter = 0;
-            fish();
+            if (isSurroundedByLiquid()) {
+                fish();
+            }
         } else {
             tickCounter++;
         }
+    }
+
+    private boolean isValidLiquid(BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        boolean valid = state.is(Blocks.WATER);
+
+        if (FishTrapsConfig.workingInLava.get()) {
+            valid = valid || state.is(Blocks.LAVA);
+        }
+
+        return valid;
+    }
+
+    private boolean isSurroundedByLiquid() {
+        if (level == null) return false;
+
+        BlockPos center = this.getBlockPos();
+        Iterable<BlockPos> checkArea = BlockPos.betweenClosed(
+                center.offset(-1, 0, -1),
+                center.offset(1, 0, 1)
+        );
+
+        for (BlockPos checkPos : checkArea) {
+            BlockState state = level.getBlockState(checkPos);
+            if (!(isValidLiquid(checkPos) || state.getBlock() instanceof DiamondFishTrap)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void fish() {
