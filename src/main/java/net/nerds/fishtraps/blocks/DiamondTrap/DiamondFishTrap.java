@@ -22,7 +22,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.nerds.fishtraps.FishTrapInit;
 import org.jetbrains.annotations.Nullable;
 
-
 public class DiamondFishTrap extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;

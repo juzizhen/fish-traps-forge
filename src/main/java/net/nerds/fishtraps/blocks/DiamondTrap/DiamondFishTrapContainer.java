@@ -1,5 +1,6 @@
 package net.nerds.fishtraps.blocks.DiamondTrap;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -13,9 +14,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class DiamondFishTrapContainer extends AbstractContainerMenu {
 
+    private final BlockPos trapPos;
+
     public DiamondFishTrapContainer(int containerId, Inventory playerInv, FishTrapItemHandler handler,
-                                    @Nullable MenuType<?> type) {
+                                    @Nullable MenuType<?> type, BlockPos trapPos) {
         super(type, containerId);
+        this.trapPos = trapPos;
         int slotIndex = 0;
 
         this.addSlot(new SlotItemHandler(handler, slotIndex++, 8, 118) {
@@ -53,7 +57,7 @@ public class DiamondFishTrapContainer extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return trapPos == null || player.distanceToSqr(trapPos.getX() + 0.5, trapPos.getY() + 0.5, trapPos.getZ() + 0.5) <= 64.0;
     }
 
     @Override

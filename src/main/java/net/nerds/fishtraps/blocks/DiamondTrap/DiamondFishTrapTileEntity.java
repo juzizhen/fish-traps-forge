@@ -92,7 +92,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
         ItemStack bait = itemHandlerBait.getStackInSlot(0);
 
         if (bait.isEmpty() && shouldTrapHavePenalty) {
-            effectiveTickCheck *= Math.max(1, FishTrapsConfig.fishBaitDurability.get());
+            effectiveTickCheck *= Math.max(1, FishTrapsConfig.trapPenaltyMultiplier.get());
         }
 
         if (tickCounter >= effectiveTickCheck) {
@@ -224,7 +224,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new DiamondFishTrapContainer(containerId, playerInventory, getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get());
+        return new DiamondFishTrapContainer(containerId, playerInventory, getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get(), getBlockPos());
     }
 
     @Override

@@ -92,7 +92,7 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
         ItemStack bait = itemHandlerBait.getStackInSlot(0);
 
         if (bait.isEmpty() && shouldTrapHavePenalty) {
-            effectiveTickCheck *= Math.max(1, FishTrapsConfig.fishBaitDurability.get());
+            effectiveTickCheck *= Math.max(1, FishTrapsConfig.trapPenaltyMultiplier.get());
         }
 
         if (tickCounter >= effectiveTickCheck) {
@@ -106,6 +106,7 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
     }
 
     private boolean isValidLiquid(BlockPos pos) {
+        if (level == null) return false;
         BlockState state = level.getBlockState(pos);
         boolean valid = state.is(Blocks.WATER);
 
@@ -224,7 +225,7 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new IronFishTrapContainer(containerId, playerInventory, getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get());
+        return new IronFishTrapContainer(containerId, playerInventory, getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get(), getBlockPos());
     }
 
     @Override

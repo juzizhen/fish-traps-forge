@@ -24,7 +24,6 @@ import net.nerds.fishtraps.blocks.WoodenTrap.WoodenFishTrapContainer;
 import net.nerds.fishtraps.blocks.WoodenTrap.WoodenFishTrapTileEntity;
 import net.nerds.fishtraps.items.FishBait;
 
-
 @Mod.EventBusSubscriber(modid = Fishtraps.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class FishTrapInit {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Fishtraps.MODID);
@@ -59,7 +58,7 @@ public class FishTrapInit {
                         BlockPos pos = buf.readBlockPos();
                         BlockEntity be = inv.player.level().getBlockEntity(pos);
                         if (be instanceof WoodenFishTrapTileEntity trap) {
-                            return new WoodenFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get());
+                            return new WoodenFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get(), pos);
                         }
                         return null;
                     }));
@@ -69,7 +68,7 @@ public class FishTrapInit {
                         BlockPos pos = buf.readBlockPos();
                         BlockEntity be = inv.player.level().getBlockEntity(pos);
                         if (be instanceof IronFishTrapTileEntity trap) {
-                            return new IronFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get());
+                            return new IronFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get(), pos);
                         }
                         return null;
                     }));
@@ -79,11 +78,10 @@ public class FishTrapInit {
                         BlockPos pos = buf.readBlockPos();
                         BlockEntity be = inv.player.level().getBlockEntity(pos);
                         if (be instanceof DiamondFishTrapTileEntity trap) {
-                            return new DiamondFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get());
+                            return new DiamondFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get(), pos);
                         }
                         return null;
                     }));
-
 
     public static final RegistryObject<Item> FISH_BAIT = ITEMS.register("fish_trap_bait",
             () -> new FishBait(new Item.Properties().stacksTo(64))

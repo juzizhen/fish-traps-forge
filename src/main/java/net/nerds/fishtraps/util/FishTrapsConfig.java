@@ -33,21 +33,21 @@ public class FishTrapsConfig {
 
     FishTrapsConfig(ForgeConfigSpec.Builder builder) {
         woodenTrapLureLevel = builder.comment("The Lure Level of the wooden trap").defineInRange("woodenTrapLureLevel", 1, 0, 10);
-        woodenTrapLuckLevel = builder.comment("The Lure Level of the wooden trap").defineInRange("woodenTrapLuckLevel", 1, 0, 10);
-        woodenTrapBaseTime = builder.comment("The Lure Level of the wooden trap").defineInRange("woodenTrapBaseTime", 900, 20, 2000000000);
+        woodenTrapLuckLevel = builder.comment("The Luck of the Sea Level of the wooden trap").defineInRange("woodenTrapLuckLevel", 1, 0, 10);
+        woodenTrapBaseTime = builder.comment("The base fishing time in ticks of the wooden trap").defineInRange("woodenTrapBaseTime", 900, 20, 2000000000);
 
-        ironTrapLureLevel = builder.comment("The Lure Level of the Iron trap").defineInRange("ironTrapLureLevel", 2, 0, 10);
-        ironTrapLuckLevel = builder.comment("The Lure Level of the Iron trap").defineInRange("ironTrapLuckLevel", 2, 0, 10);
-        ironTrapBaseTime = builder.comment("The Lure Level of the Iron trap").defineInRange("ironTrapBaseTime", 600, 20, 2000000000);
+        ironTrapLureLevel = builder.comment("The Lure level of the Iron trap").defineInRange("ironTrapLureLevel", 2, 0, 10);
+        ironTrapLuckLevel = builder.comment("The Luck of the Sea level of the Iron trap").defineInRange("ironTrapLuckLevel", 2, 0, 10);
+        ironTrapBaseTime = builder.comment("The base fishing time in ticks of the Iron trap").defineInRange("ironTrapBaseTime", 600, 20, 2000000000);
 
-        diamondTrapLureLevel = builder.comment("The Lure Level of the diamond trap").defineInRange("diamondTrapLureLevel", 3, 0, 10);
-        diamondTrapLuckLevel = builder.comment("The Lure Level of the diamond trap").defineInRange("diamondTrapLuckLevel", 3, 0, 10);
-        diamondTrapBaseTime = builder.comment("The Lure Level of the diamond trap").defineInRange("diamondTrapBaseTime", 400, 20, 2000000000);
+        diamondTrapLureLevel = builder.comment("The Lure level of the diamond trap").defineInRange("diamondTrapLureLevel", 3, 0, 10);
+        diamondTrapLuckLevel = builder.comment("The Luck of the Sea level of the diamond trap").defineInRange("diamondTrapLuckLevel", 3, 0, 10);
+        diamondTrapBaseTime = builder.comment("The base fishing time in ticks of the diamond trap").defineInRange("diamondTrapBaseTime", 400, 20, 2000000000);
 
         trapPenaltyMultiplier = builder.comment("The Multiplier penalty of traps without fishbait").defineInRange("trapPenaltyMultiplier", 40, 1, 1000);
         fishBaitDurability = builder.comment("The durability of fish bait").defineInRange("fishBaitDurability", 400, 1, 200000);
         shouldTrapHavePenalty = builder.comment("Should fish traps be penalized if they dont have bait in them").define("shouldTrapHavePenalty", true);
         useDefaultFishingLoottable = builder.comment("Use the vanilla fishing loot table (Other Mods may have altered this). If false - you can add custom datapack loottable in /fishtraps/loot_tables/traps/{material}_fish_trap.json").define("useDefaultFishingLoottable", true);
-        workingInLava =  builder.comment("Allow fish traps to function even in lava.").define("workingInLava", false);
+        workingInLava = builder.comment("Allow fish traps to function even in lava.").define("workingInLava", false);
     }
 }
