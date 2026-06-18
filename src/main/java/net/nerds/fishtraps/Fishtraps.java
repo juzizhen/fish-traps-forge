@@ -26,4 +26,3 @@ public class Fishtraps {
         FishTrapInit.CREATIVE_MODE_TABS.register(modBus);
     }
 }
-

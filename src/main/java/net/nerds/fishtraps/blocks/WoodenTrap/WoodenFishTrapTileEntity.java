@@ -43,7 +43,7 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
     private final long tickCheck;
     private final int luckOfTheSeaLevel;
     private final int lureLevel;
-    private final int fishBaitDurability;
+    private final int trapPenaltyMultiplier;
     private final boolean shouldTrapHavePenalty;
     private final boolean useDefaultFishingLoottable;
     protected FishTrapItemHandler fishTrapItemHandler = new FishTrapItemHandler();
@@ -59,7 +59,7 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
         this.luckOfTheSeaLevel = FishTrapsConfig.woodenTrapLuckLevel.get();
         this.lureLevel = FishTrapsConfig.woodenTrapLureLevel.get();
         this.tickCheck = FishTrapsConfig.woodenTrapBaseTime.get();
-        this.fishBaitDurability = FishTrapsConfig.fishBaitDurability.get();
+        this.trapPenaltyMultiplier = FishTrapsConfig.trapPenaltyMultiplier.get();
         this.shouldTrapHavePenalty = FishTrapsConfig.shouldTrapHavePenalty.get();
         this.useDefaultFishingLoottable = FishTrapsConfig.useDefaultFishingLoottable.get();
     }
@@ -70,7 +70,7 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
         long effectiveTickCheck = this.tickCheck;
         ItemStack bait = itemHandlerBait.getStackInSlot(0);
         if (bait.isEmpty() && shouldTrapHavePenalty) {
-            effectiveTickCheck = effectiveTickCheck * fishBaitDurability;
+            effectiveTickCheck = effectiveTickCheck * trapPenaltyMultiplier;
         }
 
         if (tickCounter >= effectiveTickCheck) {
@@ -186,7 +186,7 @@ public class WoodenFishTrapTileEntity extends BlockEntity implements MenuProvide
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new WoodenFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get());
+        return new WoodenFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get(), getBlockPos());
     }
 
     @Override

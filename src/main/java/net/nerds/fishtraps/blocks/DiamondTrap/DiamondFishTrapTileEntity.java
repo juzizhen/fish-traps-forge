@@ -42,7 +42,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
     private final long tickCheck;
     private final int luckOfTheSeaLevel;
     private final int lureLevel;
-    private final int fishBaitDurability;
+    private final int trapPenaltyMultiplier;
     private final boolean shouldTrapHavePenalty;
     private final boolean useDefaultFishingLoottable;
     protected FishTrapItemHandler fishTrapItemHandler = new FishTrapItemHandler();
@@ -58,7 +58,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
         this.luckOfTheSeaLevel = FishTrapsConfig.diamondTrapLuckLevel.get();
         this.lureLevel = FishTrapsConfig.diamondTrapLureLevel.get();
         this.tickCheck = FishTrapsConfig.diamondTrapBaseTime.get();
-        this.fishBaitDurability = FishTrapsConfig.fishBaitDurability.get();
+        this.trapPenaltyMultiplier = FishTrapsConfig.trapPenaltyMultiplier.get();
         this.shouldTrapHavePenalty = FishTrapsConfig.shouldTrapHavePenalty.get();
         this.useDefaultFishingLoottable = FishTrapsConfig.useDefaultFishingLoottable.get();
     }
@@ -69,7 +69,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
         long effectiveTickCheck = this.tickCheck;
         ItemStack bait = itemHandlerBait.getStackInSlot(0);
         if (bait.isEmpty() && shouldTrapHavePenalty) {
-            effectiveTickCheck = effectiveTickCheck * fishBaitDurability;
+            effectiveTickCheck = effectiveTickCheck * trapPenaltyMultiplier;
         }
 
         if (tickCounter >= effectiveTickCheck) {
@@ -83,6 +83,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
     }
 
     private boolean isValidLiquid(BlockPos pos) {
+        if (level == null) return false;
         BlockState state = level.getBlockState(pos);
         boolean valid = state.is(Blocks.WATER);
 
@@ -185,7 +186,7 @@ public class DiamondFishTrapTileEntity extends BlockEntity implements MenuProvid
 
     @Override
     public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-        return new DiamondFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get());
+        return new DiamondFishTrapContainer(containerId, playerInventory, this.getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get(), getBlockPos());
     }
 
     @Override
