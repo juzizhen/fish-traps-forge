@@ -11,6 +11,8 @@ This mod is Fish Traps Remastered forge version.
 Mod originally created by **@kylertlove** .
 mc mod for auto fishing. Supports both Forge and Fabric.
 
+***Future versions will be developed using NeoForge instead of Forge.***
+
 ### Disclaimer:
 
 - I am not the original creator of the mod! I just ported to 1.20.1 and 1.21.1.
