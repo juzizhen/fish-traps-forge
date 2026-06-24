@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "bcb",
+    "cwc",
+    "bcb"
+  ],
+  "key": {
+    "b": "minecraft:string",
+    "w": "minecraft:fishing_rod",
+    "c": "minecraft:stick"
+  },
+  "result": {
+    "id": "fishtraps:wooden_fish_trap"
+  }
+}

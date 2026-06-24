@@ -2,10 +2,15 @@ package net.nerds.fishtraps.blocks.WoodenTrap;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.nerds.fishtraps.FishTrapInit;
 import org.jetbrains.annotations.Nullable;
 
+
 public class WoodenFishTrap extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -31,8 +37,9 @@ public class WoodenFishTrap extends BaseEntityBlock implements SimpleWaterlogged
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, true));
     }
 
-    public WoodenFishTrap() {
-        this(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion());
+    public WoodenFishTrap(Identifier id) {
+        this(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).noOcclusion()
+                .setId(ResourceKey.create(Registries.BLOCK, id)));
     }
 
     @Nullable
@@ -50,7 +57,7 @@ public class WoodenFishTrap extends BaseEntityBlock implements SimpleWaterlogged
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof WoodenFishTrapTileEntity trapEntity) {
                 serverPlayer.openMenu(trapEntity, pos);
@@ -77,14 +84,14 @@ public class WoodenFishTrap extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
+        if (!level.isClientSide()) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof WoodenFishTrapTileEntity trapTile) {
                 trapTile.dropContents();
             }
-            super.onRemove(state, level, pos, newState, isMoving);
         }
+        return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
     }
 
     @Override

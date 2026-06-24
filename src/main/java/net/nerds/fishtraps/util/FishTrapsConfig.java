@@ -1,13 +1,13 @@
 package net.nerds.fishtraps.util;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class FishTrapsConfig {
 
-    public static final ForgeConfigSpec FORGE_CONFIG_SPEC;
+    public static final ModConfigSpec FORGE_CONFIG_SPEC;
     public static final FishTrapsConfig FISH_TRAPS_CONFIG;
 
     public static IntValue woodenTrapLureLevel = null;
@@ -26,12 +26,12 @@ public class FishTrapsConfig {
     public static BooleanValue workingInLava = null;
 
     static {
-        Pair<FishTrapsConfig,ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(FishTrapsConfig::new);
+        Pair<FishTrapsConfig,ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(FishTrapsConfig::new);
         FORGE_CONFIG_SPEC = specPair.getRight();
         FISH_TRAPS_CONFIG = specPair.getLeft();
     }
 
-    FishTrapsConfig(ForgeConfigSpec.Builder builder) {
+    FishTrapsConfig(ModConfigSpec.Builder builder) {
         woodenTrapLureLevel = builder.comment("The Lure Level of the wooden trap").defineInRange("woodenTrapLureLevel", 1, 0, 10);
         woodenTrapLuckLevel = builder.comment("The Luck of the Sea Level of the wooden trap").defineInRange("woodenTrapLuckLevel", 1, 0, 10);
         woodenTrapBaseTime = builder.comment("The base fishing time in ticks of the wooden trap").defineInRange("woodenTrapBaseTime", 900, 20, 2000000000);

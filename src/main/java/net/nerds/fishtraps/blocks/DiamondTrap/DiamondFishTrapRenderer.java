@@ -2,42 +2,61 @@ package net.nerds.fishtraps.blocks.DiamondTrap;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-@OnlyIn(Dist.CLIENT)
-public class DiamondFishTrapRenderer implements BlockEntityRenderer<DiamondFishTrapTileEntity> {
+public class DiamondFishTrapRenderer implements BlockEntityRenderer<DiamondFishTrapTileEntity, DiamondFishTrapRenderer.RenderState> {
 
-    private final ItemRenderer itemRenderer;
+    private final ItemModelResolver itemModelResolver;
 
     public DiamondFishTrapRenderer(BlockEntityRendererProvider.Context context) {
-        this.itemRenderer = context.getItemRenderer();
+        this.itemModelResolver = context.itemModelResolver();
     }
 
     @Override
-    public void render(DiamondFishTrapTileEntity tile, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    public RenderState createRenderState() {
+        return new RenderState();
+    }
+
+    @Override
+    public void extractRenderState(DiamondFishTrapTileEntity tile, RenderState renderState, float partialTick,
+                                   Vec3 cameraPos,
+                                   ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
+        BlockEntityRenderState.extractBase(tile, renderState, crumblingOverlay);
         ItemStack bait = tile.getInventory().getStackInSlot(0);
-        if (!bait.isEmpty()) {
-            poseStack.pushPose();
+        this.itemModelResolver.updateForTopItem(renderState.baitItem, bait, ItemDisplayContext.FIXED, null, null, 0);
+        renderState.hasBait = !bait.isEmpty();
+    }
 
-            poseStack.translate(0.5, 0.5, 0.5);
+    @Override
+    public void submit(RenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        if (!renderState.hasBait) return;
 
-            poseStack.scale(0.6f, 0.6f, 0.6f);
+        poseStack.pushPose();
+        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.scale(0.6f, 0.6f, 0.6f);
 
-            float time = ((float) System.currentTimeMillis() / 20) % 360;
-            poseStack.mulPose(Axis.YP.rotationDegrees(time));
+        float time = ((float) System.currentTimeMillis() / 20) % 360;
+        poseStack.mulPose(Axis.YP.rotationDegrees(time));
 
-            itemRenderer.renderStatic(bait, ItemDisplayContext.FIXED,
-                    combinedLight, combinedOverlay, poseStack, buffer, tile.getLevel(), 0);
+        renderState.baitItem.submit(poseStack, submitNodeCollector, renderState.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
-            poseStack.popPose();
-        }
+        poseStack.popPose();
+    }
+
+    public static class RenderState extends BlockEntityRenderState {
+        public final ItemStackRenderState baitItem = new ItemStackRenderState();
+        public boolean hasBait = false;
     }
 }

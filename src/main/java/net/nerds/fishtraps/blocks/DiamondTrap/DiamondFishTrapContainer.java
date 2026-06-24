@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import net.nerds.fishtraps.items.FishBait;
 import net.nerds.fishtraps.util.FishTrapItemHandler;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ public class DiamondFishTrapContainer extends AbstractContainerMenu {
         this.trapPos = trapPos;
         int slotIndex = 0;
 
-        this.addSlot(new SlotItemHandler(handler, slotIndex++, 8, 118) {
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, slotIndex++, 8, 118) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.getItem() instanceof FishBait;
@@ -32,11 +32,16 @@ public class DiamondFishTrapContainer extends AbstractContainerMenu {
             public int getMaxStackSize() {
                 return 1;
             }
+
+            @Override
+            public int getMaxStackSize(ItemStack stack) {
+                return 1;
+            }
         });
 
         for (int row = 0; row < 5; ++row) {
             for (int col = 0; col < 9; ++col) {
-                this.addSlot(new SlotItemHandler(handler, slotIndex++, 8 + col * 18, 17 + row * 18) {
+                this.addSlot(new ResourceHandlerSlot(handler, handler::set, slotIndex++, 8 + col * 18, 17 + row * 18) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
                         return false;
@@ -68,30 +73,34 @@ public class DiamondFishTrapContainer extends AbstractContainerMenu {
         if (slot.hasItem()) {
             ItemStack stackInSlot = slot.getItem();
             itemstack = stackInSlot.copy();
+            // Pass a copy to moveItemStackTo to avoid corrupting the handler's cached stack reference
+            ItemStack toMove = stackInSlot.copy();
 
             int fishTrapSlots = 46;
+            boolean moved = false;
 
             if (index < fishTrapSlots) {
-                if (!this.moveItemStackTo(stackInSlot, fishTrapSlots, this.slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
+                moved = this.moveItemStackTo(toMove, fishTrapSlots, this.slots.size(), true);
             } else {
                 if (isFishBait(stackInSlot)) {
-                    if (!this.moveItemStackTo(stackInSlot, 0, 1, false)) {
-                        return ItemStack.EMPTY;
-                    }
+                    moved = this.moveItemStackTo(toMove, 0, 1, false);
                 } else {
-                    if (!this.moveItemStackTo(stackInSlot, 1, fishTrapSlots, false)) {
-                        return ItemStack.EMPTY;
-                    }
+                    moved = this.moveItemStackTo(toMove, 1, fishTrapSlots, false);
                 }
             }
 
-            if (stackInSlot.isEmpty()) {
+            if (!moved) {
+                return ItemStack.EMPTY;
+            }
+
+            // Sync source slot: write back remaining count to handler
+            int remaining = toMove.getCount();
+            if (remaining <= 0) {
                 slot.set(ItemStack.EMPTY);
             } else {
-                slot.setChanged();
+                slot.set(stackInSlot.copyWithCount(remaining));
             }
+            slot.setChanged();
         }
 
         return itemstack;
