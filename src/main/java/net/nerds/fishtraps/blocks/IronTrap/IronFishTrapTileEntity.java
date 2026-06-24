@@ -80,7 +80,7 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
 
         if (tickCounter >= effectiveTickCheck) {
             tickCounter = 0;
-            if (isSurroundedByLiquid()) {
+            if (isSurroundedByLiquid() && hasOutputSpace()) {
                 fish();
             }
         } else {
@@ -116,6 +116,16 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
             }
         }
         return true;
+    }
+
+    private boolean hasOutputSpace() {
+        for (int i = 1; i < fishTrapItemHandler.size(); i++) {
+            ItemStack stack = fishTrapItemHandler.getStackInSlot(i);
+            if (stack.isEmpty() || stack.getCount() < stack.getMaxStackSize()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void fish() {
@@ -180,7 +190,6 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
                 Block.popResource(level, worldPosition, stack);
             }
         }
-        // Clear the handler after dropping
         for (int i = 0; i < fishTrapItemHandler.size(); i++) {
             fishTrapItemHandler.setStackInSlot(i, ItemStack.EMPTY);
         }

@@ -27,19 +27,14 @@ public class FishTrapItemHandler extends ItemStacksResourceHandler {
         }
     }
 
-    /**
-     * Overrides insert to enforce bait slot logic:
-     * Slot 0 only accepts FishBait items, max 1 at a time.
-     */
     @Override
     public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
         if (index == 0) {
-            // Bait slot: only accept bait items, max 1
             if (!resource.isEmpty() && !(resource.value() instanceof net.nerds.fishtraps.items.FishBait)) {
                 return 0;
             }
             int currentAmount = getAmountAsInt(0);
-            if (currentAmount > 0) return 0; // slot occupied
+            if (currentAmount > 0) return 0;
             int toInsert = Math.min(amount, 1);
             return super.insert(0, resource, toInsert, transaction);
         }
@@ -54,7 +49,6 @@ public class FishTrapItemHandler extends ItemStacksResourceHandler {
                 ItemResource resource = ItemResource.of(stackToAdd);
                 int remaining = stackToAdd.getCount();
 
-                // Try to insert into existing stacks in output slots (1 to size-1)
                 for (int i = 1; i < size() && remaining > 0; i++) {
                     ItemStack existing = ItemUtil.getStack(this, i);
                     if (!existing.isEmpty()
@@ -65,7 +59,6 @@ public class FishTrapItemHandler extends ItemStacksResourceHandler {
                     }
                 }
 
-                // Try to insert into empty slots
                 if (remaining > 0) {
                     for (int i = 1; i < size() && remaining > 0; i++) {
                         if (getAmountAsInt(i) == 0) {
@@ -94,16 +87,10 @@ public class FishTrapItemHandler extends ItemStacksResourceHandler {
         return true;
     }
 
-    /**
-     * Helper method for backward compatibility - gets the ItemStack at a given slot.
-     */
     public ItemStack getStackInSlot(int slot) {
         return ItemUtil.getStack(this, slot);
     }
 
-    /**
-     * Helper to set a stack directly in a slot.
-     */
     public void setStackInSlot(int slot, ItemStack stack) {
         if (stack.isEmpty()) {
             set(slot, ItemResource.EMPTY, 0);

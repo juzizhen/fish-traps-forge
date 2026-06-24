@@ -34,7 +34,6 @@ public class IronFishTrapRenderer implements BlockEntityRenderer<IronFishTrapTil
                                    Vec3 cameraPos,
                                    ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         BlockEntityRenderState.extractBase(tile, renderState, crumblingOverlay);
-        renderState.tile = tile;
         ItemStack bait = tile.getInventory().getStackInSlot(0);
         this.itemModelResolver.updateForTopItem(renderState.baitItem, bait, ItemDisplayContext.FIXED, tile.getLevel(), null, 0);
         renderState.hasBait = !bait.isEmpty();
@@ -42,7 +41,6 @@ public class IronFishTrapRenderer implements BlockEntityRenderer<IronFishTrapTil
 
     @Override
     public void submit(RenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-        if (renderState.tile == null) return;
         if (!renderState.hasBait) return;
 
         poseStack.pushPose();
@@ -60,6 +58,5 @@ public class IronFishTrapRenderer implements BlockEntityRenderer<IronFishTrapTil
     public static class RenderState extends BlockEntityRenderState {
         public final ItemStackRenderState baitItem = new ItemStackRenderState();
         public boolean hasBait = false;
-        public IronFishTrapTileEntity tile;
     }
 }

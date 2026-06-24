@@ -73,11 +73,10 @@ public class IronFishTrapContainer extends AbstractContainerMenu {
         if (slot.hasItem()) {
             ItemStack stackInSlot = slot.getItem();
             itemstack = stackInSlot.copy();
-            // Pass a copy to moveItemStackTo to avoid corrupting the handler's cached stack reference
             ItemStack toMove = stackInSlot.copy();
 
             int fishTrapSlots = 46;
-            boolean moved = false;
+            boolean moved;
 
             if (index < fishTrapSlots) {
                 moved = this.moveItemStackTo(toMove, fishTrapSlots, this.slots.size(), true);
@@ -93,7 +92,6 @@ public class IronFishTrapContainer extends AbstractContainerMenu {
                 return ItemStack.EMPTY;
             }
 
-            // Sync source slot: write back remaining count to handler
             int remaining = toMove.getCount();
             if (remaining <= 0) {
                 slot.set(ItemStack.EMPTY);

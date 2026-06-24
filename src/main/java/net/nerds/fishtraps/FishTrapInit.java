@@ -61,8 +61,9 @@ public class FishTrapInit {
                         if (be instanceof WoodenFishTrapTileEntity trap) {
                             return new WoodenFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.WOODEN_FISH_TRAP_MENU.get(), pos);
                         }
-                        return null;
+                        throw new IllegalStateException("Unable to open Wooden Fish Trap menu: coordinates " + pos + " block entity type does not match or does not exist!");
                     }));
+
     public static final DeferredHolder<MenuType<?>, MenuType<IronFishTrapContainer>> IRON_FISH_TRAP_MENU =
             MENUS.register("iron_fish_trap",
                     () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
@@ -71,8 +72,9 @@ public class FishTrapInit {
                         if (be instanceof IronFishTrapTileEntity trap) {
                             return new IronFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.IRON_FISH_TRAP_MENU.get(), pos);
                         }
-                        return null;
+                        throw new IllegalStateException("Unable to open Iron Fish Trap menu: coordinates " + pos + " block entity type does not match or does not exist!");
                     }));
+
     public static final DeferredHolder<MenuType<?>, MenuType<DiamondFishTrapContainer>> DIAMOND_FISH_TRAP_MENU =
             MENUS.register("diamond_fish_trap",
                     () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
@@ -81,7 +83,7 @@ public class FishTrapInit {
                         if (be instanceof DiamondFishTrapTileEntity trap) {
                             return new DiamondFishTrapContainer(windowId, inv, trap.getInventory(), FishTrapInit.DIAMOND_FISH_TRAP_MENU.get(), pos);
                         }
-                        return null;
+                        throw new IllegalStateException("Unable to open Diamond Fish Trap menu: coordinates " + pos + " block entity type does not match or does not exist!");
                     }));
 
     public static final DeferredItem<FishBait> FISH_BAIT = ITEMS.registerItem("fish_trap_bait",
