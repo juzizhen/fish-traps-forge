@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "fishtraps:item/fish_trap_bait"
+  }
+}

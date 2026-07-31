@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "fishtraps:block/diamond_fish_trap"
+  }
+}

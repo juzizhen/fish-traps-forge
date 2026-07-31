@@ -1,6 +1,7 @@
 {
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "fishtraps:block/diamond_fish_trap"
-    }
+  "parent": "block/cube_all",
+  "render_type": "cutout",
+  "textures": {
+    "all": "fishtraps:block/diamond_fish_trap"
+  }
 }
