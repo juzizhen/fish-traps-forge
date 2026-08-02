@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "bbb",
+    "bwb",
+    "bbb"
+  ],
+  "key": {
+    "b": "minecraft:diamond",
+    "w": "fishtraps:iron_fish_trap"
+  },
+  "result": {
+    "count": 1,
+    "id": "fishtraps:diamond_fish_trap"
+  }
+}

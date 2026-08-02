@@ -47,7 +47,7 @@ public class FishTrapsConfig {
         trapPenaltyMultiplier = builder.comment("The Multiplier penalty of traps without fishbait").defineInRange(FishTrapValues.PENALTY_MULTIPLIER_AMOUNT, 40, 1, 1000);
         fishBaitDurability = builder.comment("The durability of fish bait").defineInRange(FishTrapValues.FISH_BAIT_DURABILITY, 400, 1, 200000);
         shouldTrapHavePenalty = builder.comment("Should fish traps be penalized if they dont have bait in them").define(FishTrapValues.SHOULD_PENALTY_MULTIPLIER, true);
-        useDefaultFishingLoottable = builder.comment("Use the vanilla fishing loot table. If false - add custom datapack loottable in /fishtraps/loot_tables/traps/{material}_fish_trap.json").define(FishTrapValues.USE_DEFAULT_FISHING_LOOTTABLE, true);
+        useDefaultFishingLoottable = builder.comment("Use the vanilla fishing loot table. If false - add custom datapack loottable in /fishtraps/loot_table/traps/{material}_fish_trap.json").define(FishTrapValues.USE_DEFAULT_FISHING_LOOTTABLE, true);
         workingInLava = builder.comment("Allow fish traps to function even in lava.").define(FishTrapValues.WORKING_IN_LAVA, false);
     }
 }

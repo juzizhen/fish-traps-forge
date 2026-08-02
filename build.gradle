@@ -27,10 +27,12 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
-    maven {
-        url = "https://www.cursemaven.com"
-    }
+    maven {url = "https://cursemaven.com"}
+}
+
+dependencies {
+    runtimeOnly "curse.maven:torcherino-unofficial-888907:8345584"
+    runtimeOnly "curse.maven:jei-238222:8548487"
 }
 
 base {
@@ -117,10 +119,6 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-dependencies {
-    localRuntime "curse.maven:torcherino-unofficial-888907:8345584"
-}
-
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -138,17 +136,19 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
-// Include the output of "generateModMetadata" as an input directory for the build
-// this works with both building through Gradle and the IDE.
+
 sourceSets.main.resources.srcDir generateModMetadata
-// To avoid having to run "generateModMetadata" manually, make it run on every project reload
+
 neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.encoding = 'UTF-8'
 }
 
-// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+tasks.named('jar', Jar) {
+    archiveFileName = "${mod_id}-${minecraft_version}-${mod_version}.jar"
+}
+
 idea {
     module {
         downloadSources = true
