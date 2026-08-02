@@ -52,9 +52,6 @@ public abstract class BaseFishTrapBlockEntity extends BlockEntity implements Men
     private final long tickCheck;
     private final int luckOfTheSeaLevel;
     private final int lureLevel;
-    private final boolean shouldTrapHavePenalty;
-    private final boolean useDefaultFishingLoottable;
-    private final boolean workingInLava;
     private long tickCounter = 0;
     private boolean dropped = false;
 
@@ -64,9 +61,6 @@ public abstract class BaseFishTrapBlockEntity extends BlockEntity implements Men
         this.tickCheck = fishDelay;
         this.lureLevel = lureLevel;
         this.luckOfTheSeaLevel = luckOfTheSeaLevel;
-        this.shouldTrapHavePenalty = FishTrapsConfig.shouldTrapHavePenalty.get();
-        this.useDefaultFishingLoottable = FishTrapsConfig.useDefaultFishingLoottable.get();
-        this.workingInLava = FishTrapsConfig.workingInLava.get();
 
         this.fishTrapItemHandler = new FishTrapItemHandler(this);
         this.itemHandlerBait = RangedResourceHandler.of(fishTrapItemHandler, 0, 1);
@@ -79,7 +73,7 @@ public abstract class BaseFishTrapBlockEntity extends BlockEntity implements Men
         long effectiveTickCheck = this.tickCheck;
         ItemStack bait = fishTrapItemHandler.getStackInSlot(0);
 
-        if (bait.isEmpty() && shouldTrapHavePenalty) {
+        if (bait.isEmpty() && FishTrapsConfig.shouldTrapHavePenalty.get()) {
             effectiveTickCheck *= Math.max(1, FishTrapsConfig.trapPenaltyMultiplier.get());
         }
 
@@ -97,7 +91,7 @@ public abstract class BaseFishTrapBlockEntity extends BlockEntity implements Men
         if (level == null) return false;
         BlockState state = level.getBlockState(pos);
         boolean valid = state.is(Blocks.WATER);
-        if (workingInLava) {
+        if (FishTrapsConfig.workingInLava.get()) {
             valid = valid || state.is(Blocks.LAVA);
         }
         return valid;
@@ -152,7 +146,7 @@ public abstract class BaseFishTrapBlockEntity extends BlockEntity implements Men
                 .create(LootContextParamSets.FISHING);
 
         LootTable lootTable;
-        if (useDefaultFishingLoottable) {
+        if (FishTrapsConfig.useDefaultFishingLoottable.get()) {
             lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
             if (serverLevel.getRandom().nextDouble() < 0.04 + ((double) this.luckOfTheSeaLevel / 100)) {
                 lootTable = serverLevel.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_TREASURE);
