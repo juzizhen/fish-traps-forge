@@ -12,7 +12,7 @@ public class Fishtraps {
     public static final String MODID = "fishtraps";
 
     public Fishtraps(IEventBus modBus, ModContainer container) {
-        container.registerConfig(ModConfig.Type.COMMON, FishTrapsConfig.FORGE_CONFIG_SPEC);
+        container.registerConfig(ModConfig.Type.LOCAL, FishTrapsConfig.FORGE_CONFIG_SPEC);
 
         FishTrapInit.BLOCKS.register(modBus);
         FishTrapInit.ITEMS.register(modBus);

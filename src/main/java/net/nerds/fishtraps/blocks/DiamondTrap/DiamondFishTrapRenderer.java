@@ -48,7 +48,7 @@ public class DiamondFishTrapRenderer implements BlockEntityRenderer<DiamondFishT
         poseStack.scale(0.6f, 0.6f, 0.6f);
 
         float time = ((float) System.currentTimeMillis() / 20) % 360;
-        poseStack.mulPose(Axis.YP.rotationDegrees(time));
+        poseStack.rotateDegrees(Axis.YP, time);
 
         renderState.baitItem.submit(poseStack, submitNodeCollector, renderState.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 

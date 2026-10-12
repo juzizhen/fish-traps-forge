@@ -1,6 +1,5 @@
 package net.nerds.fishtraps.blocks.IronTrap;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -24,7 +23,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.nerds.fishtraps.FishTrapInit;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 
 public class IronFishTrap extends BaseEntityBlock implements SimpleWaterloggedBlock {
@@ -91,11 +90,6 @@ public class IronFishTrap extends BaseEntityBlock implements SimpleWaterloggedBl
             }
         }
         return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(net.nerds.fishtraps.blocks.IronTrap.IronFishTrap::new);
     }
 
     @Override

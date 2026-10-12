@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import net.nerds.fishtraps.items.FishBait;
 import net.nerds.fishtraps.util.FishTrapItemHandler;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class IronFishTrapContainer extends AbstractContainerMenu {
 

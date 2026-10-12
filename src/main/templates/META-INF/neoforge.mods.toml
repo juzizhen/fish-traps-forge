@@ -20,7 +20,7 @@ Auto Fishing Mod.
     # reason="..."
     # The version range of the dependency
     # versionRange="[${neo_version},)" #mandatory
-    versionRange="[26.1.0.19-beta,)" #mandatory
+    versionRange="[${neo_version},)" #mandatory
     # An ordering relationship for the dependency.
     # BEFORE - This mod is loaded BEFORE the dependency
     # AFTER - This mod is loaded AFTER the dependency
@@ -34,6 +34,6 @@ Auto Fishing Mod.
     type="required"
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
     # versionRange="${minecraft_version_range}"
-    versionRange="[26.1,)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
