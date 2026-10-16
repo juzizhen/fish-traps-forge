@@ -24,6 +24,7 @@ public class FishTrapsConfig {
     public static BooleanValue shouldTrapHavePenalty = null;
     public static BooleanValue useDefaultFishingLoottable = null;
     public static BooleanValue workingInLava = null;
+    public static BooleanValue allowWaterloggedBlocks = null;
 
     static {
         Pair<FishTrapsConfig,ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(FishTrapsConfig::new);
@@ -49,5 +50,6 @@ public class FishTrapsConfig {
         shouldTrapHavePenalty = builder.comment("Should fish traps be penalized if they dont have bait in them").define("shouldTrapHavePenalty", true);
         useDefaultFishingLoottable = builder.comment("Use the vanilla fishing loot table (Other Mods may have altered this). If false - you can add custom datapack loottable in /fishtraps/loot_tables/traps/{material}_fish_trap.json").define("useDefaultFishingLoottable", true);
         workingInLava = builder.comment("Allow fish traps to function even in lava.").define("workingInLava", false);
+        allowWaterloggedBlocks = builder.comment("Allow fish traps to function when the blocks around them are waterlogged blocks (stairs, slabs, fences... holding water) instead of water source blocks.").define("allowWaterloggedBlocks", false);
     }
 }

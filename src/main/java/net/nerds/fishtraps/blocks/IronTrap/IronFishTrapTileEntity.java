@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -29,7 +30,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 import net.nerds.fishtraps.FishTrapInit;
 import net.nerds.fishtraps.Fishtraps;
-import net.nerds.fishtraps.blocks.DiamondTrap.DiamondFishTrap;
 import net.nerds.fishtraps.items.FishBait;
 import net.nerds.fishtraps.util.FishTrapItemHandler;
 import net.nerds.fishtraps.util.FishTrapsConfig;
@@ -118,14 +118,28 @@ public class IronFishTrapTileEntity extends BlockEntity implements MenuProvider 
     }
 
     private boolean isValidLiquid(BlockPos pos) {
+        if (level == null) return false;
         BlockState state = level.getBlockState(pos);
-        boolean valid = state.is(Blocks.WATER);
+        boolean valid = isSourceWater(state);
+
+        if (FishTrapsConfig.allowWaterloggedBlocks.get()) {
+            valid = valid || isWaterlogged(state);
+        }
 
         if (FishTrapsConfig.workingInLava.get()) {
             valid = valid || state.is(Blocks.LAVA);
         }
 
         return valid;
+    }
+
+    private boolean isSourceWater(BlockState state) {
+        return state.is(Blocks.WATER) && state.getFluidState().isSource();
+    }
+
+    private boolean isWaterlogged(BlockState state) {
+        return state.hasProperty(BlockStateProperties.WATERLOGGED)
+                && state.getValue(BlockStateProperties.WATERLOGGED);
     }
 
     private boolean isSurroundedByLiquid() {
